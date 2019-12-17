@@ -1,0 +1,118 @@
+﻿@model ProductManagement.Models.ProductData
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Product</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProductName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CategoryId, "CategoryId", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @*@Html.DropDownList("CategoryId", null, htmlAttributes: new { @class = "form-control" })*@
+                @Html.Hidden("hdnCate", "")
+                <select id="Category" class="btn btn-default dropdown-toggle">
+                </select>
+
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $("#Category").change(function () {
+                            $("#hdnCate").val($("#Category").val());
+                        });
+
+                        $("input[type='submit']").on("click", function () {
+                            if ($("#Category").val() == "") {
+                                alert("Select Category");
+                                return false;
+                            }
+                        });
+
+                        $.ajax({
+                            type: "get",
+                            url: "https://localhost:44398/api/Category",
+                            contentType: "application/json;charset=utf-8",
+                            dataType: "json",
+                            data: {},
+                            success: function (result) {
+                                var html = "<option value=''>Select Category</option>";
+                                debugger;
+                                $.each(result, function (i, val) {
+                                    debugger;
+                                    html += "<option value='" + val.CategoryId + "'>" + val.CategoryName + "</option>";
+                                });
+                                $('#Category').append(html);
+                            },
+                            failure: function () {
+                                alert("Error");
+                            }
+                        });
+
+                    });
+                </script>
+                @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Price, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Currency, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.Currency, new List<SelectListItem>
+                 {
+                    new SelectListItem{ Text="INR", Value = "1" },
+                    new SelectListItem{ Text="ZAR", Value = "2" },
+                    new SelectListItem{ Text="DOLLER", Value = "3" },
+                    new SelectListItem{ Text="YEN", Value = "4" }
+                 }, new { @class = "btn btn-default dropdown-toggle" })
+                @Html.ValidationMessageFor(model => model.Currency, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Units, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Units, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Units, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

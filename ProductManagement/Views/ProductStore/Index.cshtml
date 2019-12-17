@@ -1,0 +1,110 @@
+﻿@model IEnumerable<ProductManagement.Models.ProductData>
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#Category").off("change").on("change", function () {
+            $.ajax({
+                type: "POST",
+                url: "/ProductStore/Index",
+                data: '{categoryId:"' + $("#Category").val() + '"}',
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    debugger;
+                },
+                failure: function (response) {
+                    debugger;
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    debugger;
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $.ajax({
+            type: "get",
+            url: "https://localhost:44398/api/Category",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            data: {},
+            success: function (result) {
+                var html = "<option value=''>Select Category</option>";
+                $.each(result, function (i, val) {
+                    html += "<option value='" + val.CategoryId + "'>" + val.CategoryName + "</option>";
+                });
+                $('#Category').append(html);
+            },
+            failure: function () {
+                alert("Error");
+            }
+        });
+    });
+</script>
+@{
+    ViewBag.Title = "Product Store";
+}
+
+
+<h2>Product Store</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+<p>
+    @Html.ActionLink("All Categories", "Index", "ProductCategory")
+</p>
+
+<select id="Category" class="btn btn-default dropdown-toggle">
+</select>
+
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ProductName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CategoryId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Price)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Currency)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Units)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CategoryId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Currency)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Units)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ProductId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.ProductId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.ProductId })
+            </td>
+        </tr>
+    }
+
+</table>
